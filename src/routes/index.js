@@ -86,19 +86,17 @@ router.post('/webhook/tradingview',(req,res)=>{
            
     }
     else if(req.body['side'] == 'sell'){
-        let api = ''
-        let key = ''
         users.forEach(element => {
             if(element['status']==true){
-                api = element['api']
-                key = element['key']
-                API_BITSO(api,key,'GET','balance',json_order,(data)=>{
+                API_BITSO(element['api'],element['key'],'GET','balance',json_order,(data)=>{
                     data['payload']['balances'].every(element => {
                         if(element['currency']==req.body['symbol'].split('_')[0]){
                             json_order = {'book':req.body['symbol'],'side':req.body['side'],'type':'market','major':`${element['total']}`}
-                            API_BITSO(api,key,'POST','orders',json_order,(data)=>{
-                                //console.log(data);
-                            })
+                            users.forEach(element => {
+                                API_BITSO(element['api'],element['key'],'POST','orders',json_order,(data)=>{
+                                    //console.log(data);
+                                })
+                            });
                             return false;
                         }
                         return true;
