@@ -93,9 +93,11 @@ router.post('/webhook/tradingview',(req,res)=>{
                         if(element['currency']==req.body['symbol'].split('_')[0]){
                             json_order = {'book':req.body['symbol'],'side':req.body['side'],'type':'market','major':`${element['total']}`}
                             users.forEach(element => {
-                                API_BITSO(element['api'],element['key'],'POST','orders',json_order,(data)=>{
-                                    console.log(data);
-                                })
+                                if(element['status']==true){
+                                    API_BITSO(element['api'],element['key'],'POST','orders',json_order,(data)=>{
+                                        console.log(data);
+                                    })
+                                }
                             });
                             return false;
                         }
